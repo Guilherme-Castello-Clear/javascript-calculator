@@ -25,7 +25,7 @@ class CalcController{
 
     }
     addEventListenerAll(element, event, f){
-
+        // Add more than one Event to a button
         event.split(" ").forEach(event => {
             element.addEventListener(event, f, false);
         });
@@ -33,55 +33,57 @@ class CalcController{
     }
 
     clearAll(){
-
+        //Clear Calculator
         this._operation = [];
+        this._lastNumber = '';
+        this._lastOperator = '';
         this.setLastNumberToDisplay();
 
     }
 
     clearEntry(){
-
+        //Clear Last Entry
         this._operation.pop();
         this.setLastNumberToDisplay();
 
     }
 
     getLastOperation(){
-
+        //Get last value of array _operation
         return this._operation[this._operation.length - 1];
 
     }
 
     isOperator(value){
-
+        //Identify if value is a operator ('+', "-", "*", "%", "/")
         return (['+', "-", "*", "%", "/"].indexOf(value) > -1)
 
     }
 
 
     setLastOperation(newValue){
+        //Define a new value for the last _operation position
         this._operation[(this._operation.length - 1)] = newValue;
     }
 
 
     pushOperation(value){
+        //Insert a value in operation
         this._operation.push(value);
 
         if(this._operation.length > 3){
-
-
 
             this.calc();
         }
     }
 
     getResult(){
-
-        return eval(this._operation.join(""));
+        //Get the final result of _operation
+        return eval(this._operation.join(""));// Evaluete _operation array using .join("") to convert in a string without ","
     }
 
     calc(){
-        //Execute 
+        //Execute the calculator logic process, never leaving array get bigger than 3
 
         let last = '';
         this._lastOperator = this.getLastItem(true);
@@ -125,7 +127,7 @@ class CalcController{
     }
 
     getLastItem(isOperator = true){
-
+        //Get the last item of _operation array. Can be used to get Operators (true) or Numbers (False)
         let lastItem;
         for(let i = this._operation.length-1; i>=0; i--){
 
@@ -148,7 +150,7 @@ class CalcController{
 
 
     setLastNumberToDisplay(){
-
+        //Send the last number to display
         let lastNumber = this.getLastItem(false);
 
         if(!lastNumber) lastNumber = 0;
@@ -160,18 +162,14 @@ class CalcController{
 
 
     addOperation(value){
-
-
         if(isNaN(this.getLastOperation())){ //Verify if the last position of _operation array is not a number
             
             if(this.isOperator(value)){ //Verify if value is a operator. If it's, replaces last position
                 
                 this.setLastOperation(value);
+
             }
-            else if(isNaN(value)){ //Verify if value is not a number
-                
-                console.log(value);
-            }
+            
             else{
                 this.pushOperation(value);
 
@@ -189,7 +187,7 @@ class CalcController{
             else{
 
                 let newValue = this.getLastOperation().toString() + value.toString();
-                this.setLastOperation(parseInt(newValue));
+                this.setLastOperation(newValue);
 
                 this.setLastNumberToDisplay();
                 //att display
@@ -202,6 +200,21 @@ class CalcController{
 
         this.displayCalc = "Error";
 
+    }
+
+    addDot(){
+        let lastOperation = this.getLastOperation();
+        console.log(lastOperation);
+
+        if(typeof lastOperation === 'string' && lastOperation.split('').indexOf('.') > -1) return;
+
+        if(this.isOperator(lastOperation) || !lastOperation){
+            this.pushOperation('0.');
+        }
+        else{
+            this.setLastOperation(lastOperation.toString()+'.');
+        }
+        this.setLastNumberToDisplay();
     }
 
     execBtn(value){
@@ -230,8 +243,8 @@ class CalcController{
             case "igual":
                 this.calc();
                 break;
-            case ".":
-                this.addOperation(".")
+            case "ponto":
+                this.addDot();
                 break;
             case '0':
             case "1":
