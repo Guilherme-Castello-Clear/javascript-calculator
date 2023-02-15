@@ -13,7 +13,33 @@ class CalcController{
         this._timeCalcEL = document.querySelector("#hora");
         this._currentDate;
         this.inicialize();
-        this.initButtonsEvents()
+        this.initButtonsEvents();
+        this.initKeyboard();
+        this.pasteFromClipboard();
+    }
+
+
+    pasteFromClipboard(){
+
+        document.addEventListener('paste', e =>{
+
+            let text = e.clipboardData.getData('Text');
+            this.displayCalc = parseFloat(text);
+            console.log(text);
+        });
+
+    }
+
+    copyToClipboard(){
+
+        let input = document.createElement("input");
+        input.value = this.displayCalc;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand("Copy");
+        input.remove();
+        
+
     }
 
     inicialize(){
@@ -22,8 +48,64 @@ class CalcController{
             this.setDisplayDateTime();
         }, 1000);
         this.setLastNumberToDisplay();      
+        this.pasteFromClipboard();
 
     }
+
+    initKeyboard(){
+
+        document.addEventListener('keyup', e =>{
+            console.log(e.key);
+            switch(e.key){
+                case "F5":
+                    break;
+                case "Escape":
+                    this.clearAll();
+                    break;
+                case "Backspace":
+                    this.clearEntry();
+                    break;
+                case "+":
+                case "-":
+                case "*":
+                case "/":
+                case "%":
+                    this.addOperation(e.key);
+                    break;
+                case "Enter":
+                case "=":
+                    this.calc();
+                    break;
+                case ".":
+                case ",":
+                    this.addDot();
+                    break;
+                case '0':
+                case "1":
+                case "2":
+                case "3":                
+                case "4":    
+                case "5":
+                case "6":
+                case "7":
+                case "8":
+                case "9":
+                    this.addOperation(parseInt(e.key));
+                    break;
+                case "c":
+                    if(e.ctrlKey) this.copyToClipboard();
+                    break;
+                case "Control":
+                    if(e.key == "c") this.copyToClipboard();
+                    break;
+                default:
+                    break;
+                }
+
+        });
+
+    }
+    
     addEventListenerAll(element, event, f){
         // Add more than one Event to a button
         event.split(" ").forEach(event => {
@@ -259,7 +341,7 @@ class CalcController{
                 this.addOperation(parseInt(value));
                 break;
         
-            }
+        }
     }
 
 
